@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.PotionDao" >
+
+    <!--分页查询-->
+    <select id="getPotionList" parameterType="Potion" resultType="Potion">
+        select * from hospitalsystem.potion
+        <where>
+            <if test="potionNo!=null and potionNo!='' ">
+                and  potion_no like  '%${potionNo}%'
+            </if>
+            <if test="potionName!=null and potionName!=''">
+                and  potion_name like  '%${potionName}%'
+            </if>
+        </where>
+        ORDER BY  potion_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.potion
+        <where>
+            <if test="potionNo!=null and potionNo!='' ">
+                and  potion_no like  '%${potionNo}%'
+            </if>
+            <if test="potionName!=null and potionName!=''">
+                and  potion_name like  '%${potionName}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加药物信息-->
+    <insert id="addPotion" parameterType="Potion" keyProperty="potionId" useGeneratedKeys="true">
+        insert into hospitalsystem.potion (potion_no,potion_name,potion_price,potion_quantity,potion_ren)
+        values(#{potionNo},#{potionName},#{potionPrice},#{potionQuantity},#{potionRen})
+    </insert>
+
+    <!--通过id删除药物信息-->
+    <delete id="deletePotion" parameterType="java.lang.Integer" >
+        delete from hospitalsystem.potion where potion_id=#{potionId}
+    </delete>
+
+    <select id="findPotionById"  parameterType="java.lang.Integer" resultType="Potion" >
+        select * from hospitalsystem.potion where potion_id=#{potionId}
+    </select>
+
+    <select id="getAll" resultType="Potion">
+        select * from hospitalsystem.potion
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updatePotion" parameterType="Potion">
+        update hospitalsystem.potion
+        <set>
+            <if test="potionNo !=null and potionNo !=''">
+                potion_no=#{potionNo},
+            </if>
+            <if test="potionName !=null and potionName !=''">
+                potion_name=#{potionName},
+            </if>
+            <if test="potionPrice !=null and potionPrice !=''">
+                potion_price=#{potionPrice},
+            </if>
+            <if test="potionQuantity !=null and potionQuantity !=''">
+                potion_quantity=#{potionQuantity},
+            </if>
+            <if test="potionRen!=null and potionRen!=''">
+                potion_ren=#{potionRen},
+            </if>
+        </set>
+        where potion_id = #{potionId}
+    </update>
+</mapper>

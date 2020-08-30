@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.AppartusDao" >
+
+    <!--分页查询-->
+    <select id="getTmsList" parameterType="Appartus" resultType="Appartus">
+        select * from hospitalsystem.appartus
+        <where>
+            <if test="appartusNo!=null and appartusNo!='' ">
+                and  appartus_no like  '%${appartusNo}%'
+            </if>
+            <if test="appartusName!=null and appartusName!=''">
+                and  appartus_name like  '%${appartusName}%'
+            </if>
+        </where>
+        ORDER BY  appartus_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.appartus
+        <where>
+            <if test="appartusNo!=null and appartusNo!='' ">
+                and  appartus_no like  '%${appartusNo}%'
+            </if>
+            <if test="appartusName!=null and appartusName!=''">
+                and  appartus_name like  '%${appartusName}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加管理员信息-->
+    <insert id="addAppartus" parameterType="Appartus" keyProperty="appartusId" useGeneratedKeys="true">
+        insert into hospitalsystem.appartus (appartus_no,appartus_name,appartus_price,appartus_quantity,appartus_ren)
+        values(#{appartusNo},#{appartusName},#{appartusPrice},#{appartusQuantity},#{appartusRen})
+    </insert>
+
+    <!--通过id删除管理员信息-->
+    <delete id="deleteAppartus" parameterType="java.lang.Integer" >
+        delete from hospitalsystem.appartus where appartus_id=#{appartusId}
+    </delete>
+
+    <select id="findAppartusById"  parameterType="java.lang.Integer" resultType="Appartus" >
+        select * from hospitalsystem.appartus where appartus_id=#{appartusId}
+    </select>
+
+    <select id="getAll" resultType="Appartus">
+        select * from hospitalsystem.appartus
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updateAppartus" parameterType="Appartus">
+        update hospitalsystem.appartus
+        <set>
+            <if test="appartusNo !=null and appartusNo !=''">
+                appartus_no=#{appartusNo},
+            </if>
+            <if test="appartusName !=null and appartusName !=''">
+                appartus_name=#{appartusName},
+            </if>
+            <if test="appartusPrice !=null and appartusPrice !=''">
+                appartus_price=#{appartusPrice},
+            </if>
+            <if test="appartusQuantity !=null and appartusQuantity !=''">
+                appartus_quantity=#{appartusQuantity},
+            </if>
+            <if test="appartusRen!=null and appartusRen!=''">
+                appartus_ren=#{appartusRen},
+            </if>
+        </set>
+        where appartus_id = #{appartusId}
+    </update>
+</mapper>

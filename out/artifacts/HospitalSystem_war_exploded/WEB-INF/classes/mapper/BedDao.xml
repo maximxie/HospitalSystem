@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.BedDao" >
+
+    <!--分页查询-->
+    <select id="getSalaryList" parameterType="Bed" resultType="Bed">
+        select * from hospitalsystem.bed
+        <where>
+            <if test="bedNo!=null and bedNo!='' ">
+                and  bed_no like  '%${bedNo}%'
+            </if>
+            <if test="bedRoomId!=null and bedRoomId!=''">
+                and  bed_roomId like  '%${bedRoomId}%'
+            </if>
+        </where>
+        ORDER BY  bed_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.bed
+        <where>
+            <if test="bedNo!=null and bedNo!='' ">
+                and  bed_no like  '%${bedNo}%'
+            </if>
+            <if test="bedRoomId!=null and bedRoomId!=''">
+                and  bed_roomId like  '%${bedRoomId}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加信息-->
+    <insert id="addBed" parameterType="Bed" keyProperty="bedId" useGeneratedKeys="true">
+        insert into hospitalsystem.bed (bed_no,bed_roomId,bed_judge)
+        values(#{bedNo},#{bedRoomId},#{bedJudge})
+    </insert>
+
+
+    <select id="findBedById"  parameterType="java.lang.Integer" resultType="Bed" >
+        select * from hospitalsystem.bed where bed_id=#{bedId}
+    </select>
+
+    <select id="getAll" resultType="Bed">
+        select * from hospitalsystem.bed
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updateBed" parameterType="Bed">
+        update hospitalsystem.bed
+        <set>
+            <if test="bedNo !=null and bedNo !=''">
+                bed_no=#{bedNo},
+            </if>
+            <if test="bedRoomId !=null and bedRoomId !=''">
+                bed_roomId=#{bedRoomId},
+            </if>
+            <if test="bedJudge !=null and bedJudge !=''">
+                bed_judge=#{bedJudge},
+            </if>
+        </set>
+        where bed_id = #{bedId}
+    </update>
+
+
+    <!--Mybatis使用Collection进行表关联查询关联一对多数据类型(dept为一，personnel为多)，且需要有id-->
+    <!--Association关联一对一类型-->
+    <!--部门人员信息查询信息-->
+    <resultMap type="com.xie.pojo.Bed" id="cardAndInfo">
+        <id property="bedId" column="bed_id"/>
+        <result property="bedNo" column="bed_no"/>
+        <result property="bedRoomId" column="bed_roomId"/>
+        <result property="bedJudge" column="bed_judge"/>
+        <association property="room" javaType="com.xie.pojo.Room">
+            <id property="roomId" column="room_id"/>
+            <result property="roomNo" column="room_no"/>
+            <result property="roomJudge" column="room_judge"/>
+        </association>
+        <association property="paitient" javaType="com.xie.pojo.Paitient">
+            <id property="paitientId" column="paitient_id"/>
+            <result property="paitientName" column="paitient_name"/>
+            <result property="paitientGender" column="paitient_gender"/>
+            <result property="paitientDateStart" column="paitient_dateStart"/>
+            <result property="paitientDept" column="paitient_dept"/>
+            <result property="paitientState" column="paitient_state"/>
+            <result property="paitientDoc" column="paitient_doc"/>
+            <result property="paitientRoom" column="paitient_room"/>
+            <result property="paitientBed" column="paitient_bed"/>
+        </association>
+    </resultMap>
+
+    <select id="findRoomT" parameterType="Room" resultMap="cardAndInfo">
+        select r.room_no as room_no,r.room_judge as room_judge,b.bed_no as bed_no,b.bed_judge as bed_judge,ifnull(p.paitient_name,'空') as paitient_name
+        from hospitalsystem.bed b join hospitalsystem.room r on b.bed_roomId=r.room_no left join hospitalsystem.paitient p on
+        b.bed_no=p.paitient_bed
+        <where>
+            <if test="roomNo!=null and roomNo!='' ">
+                and  r.room_no like '%${roomNo}%'
+            </if>
+        </where>
+    </select>
+
+</mapper>

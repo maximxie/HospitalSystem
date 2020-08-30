@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.TmsDao" >
+
+    <!--登陆查询-->
+    <select id="findTms" parameterType="Tms" resultType="Tms">
+        select * from hospitalsystem.tms
+        where
+        <if test="tmsUser!=null and tmsUser!=''">
+            tms_user = #{tmsUser}
+        </if>
+        <if test="tmsPswd!=null and tmsPswd!='' ">
+            and tms_pswd = #{tmsPswd}
+        </if>
+    </select>
+
+    <!--分页查询-->
+    <select id="getTmsList" parameterType="Tms" resultType="Tms">
+        select * from hospitalsystem.tms
+        <where>
+            <if test="tmsUser!=null and tmsUser!='' ">
+                and  tms_user like  '%${tmsUser}%'
+            </if>
+            <if test="tmsName!=null and tmsName!=''">
+                and  tms_name like  '%${tmsName}%'
+            </if>
+        </where>
+        ORDER BY  tms_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.tms
+        <where>
+            <if test="tmsUser!=null and tmsUser!='' ">
+                and  tms_user like  '%${tmsUser}%'
+            </if>
+            <if test="tmsName!=null and tmsName!=''">
+                and  tms_name like  '%${tmsName}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加管理员信息-->
+    <insert id="addTms" parameterType="Tms" keyProperty="tmsId" useGeneratedKeys="true">
+        insert into hospitalsystem.tms (tms_user,tms_pswd,tms_name,tms_power,tms_describe)
+        values(#{tmsUser},#{tmsPswd},#{tmsName},#{tmsPower},#{tmsDescribe})
+    </insert>
+
+    <!--通过id删除管理员信息-->
+    <delete id="deleteTms" parameterType="java.lang.Integer" >
+        delete from hospitalsystem.tms where tms_id=#{tmsId}
+    </delete>
+
+    <select id="findTmsById"  parameterType="java.lang.Integer" resultType="Tms" >
+        select * from hospitalsystem.tms where tms_id=#{tmsId}
+    </select>
+
+    <select id="getAll" resultType="Tms">
+        select * from hospitalsystem.tms
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updateTms" parameterType="Tms">
+        update hospitalsystem.tms
+        <set>
+            <if test="tmsUser !=null and tmsUser !=''">
+                tms_user=#{tmsUser},
+            </if>
+            <if test="tmsPswd !=null and tmsPswd !=''">
+                tms_pswd=#{tmsPswd},
+            </if>
+            <if test="tmsName !=null and tmsName !=''">
+                tms_name=#{tmsName},
+            </if>
+            <if test="tmsPower !=null and tmsPower !=''">
+                tms_power=#{tmsPower},
+            </if>
+            <if test="tmsDescribe!=null and tmsDescribe!=''">
+                tms_describe=#{tmsDescribe},
+            </if>
+        </set>
+        where tms_id = #{tmsId}
+    </update>
+</mapper>

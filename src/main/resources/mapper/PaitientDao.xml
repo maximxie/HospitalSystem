@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.PaitientDao" >
+
+    <!--分页查询-->
+    <select id="getPotionList" parameterType="Paitient" resultMap="cardAndInfo">
+        select * from hospitalsystem.paitient pa join hospitalsystem.personnel pe on pa.paitient_doc = pe.emp_no
+        <where>
+            <if test="paitientId!=null and paitientId!='' ">
+                and  paitient_id like  '%${paitientId}%'
+            </if>
+            <if test="paitientName!=null and paitientName!=''">
+                and  paitient_name like  '%${paitientName}%'
+            </if>
+            <if test="paitientGender!=null and paitientGender!=''">
+                and  paitient_gender like  '%${paitientGender}%'
+            </if>
+        </where>
+        ORDER BY  paitient_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.paitient
+        <where>
+            <if test="paitientId!=null and paitientId!='' ">
+                and  paitient_id like  '%${paitientId}%'
+            </if>
+            <if test="paitientName!=null and paitientName!=''">
+                and  paitient_name like  '%${paitientName}%'
+            </if>
+            <if test="paitientGender!=null and paitientGender!=''">
+                and  paitient_gender like  '%${paitientGender}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加药物信息-->
+    <insert id="addPaitient" parameterType="Paitient" keyProperty="paitientId" useGeneratedKeys="true">
+        insert into hospitalsystem.paitient (paitient_name,paitient_gender,paitient_dateStart,paitient_dept,paitient_state,paitient_doc,paitient_room,paitient_bed)
+        values(#{paitientName},#{paitientGender},#{paitientDateStart},#{paitientDept},#{paitientState},#{paitientDoc},#{paitientRoom},#{paitientBed})
+    </insert>
+
+    <!--通过id删除药物信息-->
+    <delete id="deletePaitient" parameterType="java.lang.Integer" >
+        delete from hospitalsystem.paitient where paitient_id=#{paitientId}
+    </delete>
+
+    <select id="findPaitientById"  parameterType="java.lang.Integer" resultType="Paitient" >
+        select * from hospitalsystem.paitient where paitient_id=#{paitientId}
+    </select>
+
+    <select id="getAll" resultType="Paitient">
+        select * from hospitalsystem.paitient
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updatePaitient" parameterType="Paitient">
+        update hospitalsystem.paitient
+        <set>
+            <if test="paitientName !=null and paitientName !=''">
+                paitient_name=#{paitientName},
+            </if>
+            <if test="paitientGender !=null and paitientGender !=''">
+                paitient_gender=#{paitientGender},
+            </if>
+            <if test="paitientDateStart !=null and paitientDateStart !=''">
+                paitient_dateStart=#{paitientDateStart},
+            </if>
+            <if test="paitientDept !=null and paitientDept !=''">
+                paitient_dept=#{paitientDept},
+            </if>
+            <if test="paitientState!=null and paitientState!=''">
+                paitient_state=#{paitientState},
+            </if>
+            <if test="paitientDoc!=null and paitientDoc!=''">
+                paitient_doc=#{paitientDoc},
+            </if>
+            <if test="paitientRoom!=null and paitientRoom!=''">
+                paitient_room=#{paitientRoom},
+            </if>
+            <if test="paitientBed!=null and paitientBed!=''">
+                paitient_bed=#{paitientBed},
+            </if>
+        </set>
+        where paitient_id = #{paitientId}
+    </update>
+
+    <resultMap type="com.xie.pojo.Paitient" id="cardAndInfo">
+        <id property="paitientId" column="paitient_id"/>
+        <result property="paitientName" column="paitient_name"/>
+        <result property="paitientGender" column="paitient_gender"/>
+        <result property="paitientDateStart" column="paitient_dateStart"/>
+        <result property="paitientDept" column="paitient_dept"/>
+        <result property="paitientState" column="paitient_state"/>
+        <result property="paitientDoc" column="paitient_doc"/>
+        <result property="paitientRoom" column="paitient_room"/>
+        <result property="paitientBed" column="paitient_bed"/>
+        <association property="personnel" javaType="com.xie.pojo.Personnel">
+            <id property="empId" column="emp_id"/>
+            <result property="empNo" column="emp_no"/>
+            <result property="empName" column="emp_name"/>
+            <result property="empDeptId" column="emp_deptId"/>
+            <result property="empDuty" column="emp_duty"/>
+            <result property="empXl" column="emp_xl"/>
+            <result property="empGender" column="emp_gender"/>
+            <result property="empBirthday" column="emp_birthday"/>
+            <result property="empHometown" column="emp_hometown"/>
+            <result property="empCountry" column="emp_country"/>
+            <result property="empNation" column="emp_nation"/>
+            <result property="empIdCard" column="emp_idCard"/>
+            <result property="empMarriage" column="emp_marriage"/>
+            <result property="empHealth" column="emp_health"/>
+            <result property="empStartWork" column="emp_startWork"/>
+            <result property="empState" column="emp_state"/>
+            <result property="empHomeAddress" column="emp_homeAddress"/>
+            <result property="empTeleNo" column="emp_teleNo"/>
+            <result property="empEmail" column="emp_email"/>
+            <result property="empJobId" column="emp_jobId"/>
+        </association>
+    </resultMap>
+
+    <select id="findPP" parameterType="Personnel" resultMap="cardAndInfo">
+        select pe.emp_no as emp_no,pe.emp_name as emp_name,pa.paitient_id as paitient_id,pa.paitient_name as paitient_name,pa.paitient_gender as paitient_gender,pa.paitient_state as paitient_state,pa.paitient_dateStart as paitient_dateStart
+        from hospitalsystem.personnel pe join hospitalsystem.paitient pa on pe.emp_no = pa.paitient_doc
+        <where>
+            <if test="empNo!=null and empNo!='' ">
+                and  pe.emp_no like '%${empNo}%'
+            </if>
+            <if test="empName!=null and empName!='' ">
+                and  pe.emp_name like '%${empName}%'
+            </if>
+        </where>
+    </select>
+</mapper>

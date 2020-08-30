@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.SalaryDao" >
+
+    <!--分页查询-->
+    <select id="getSalaryList" parameterType="Salary" resultType="Salary">
+        select * from hospitalsystem.salary
+        <where>
+            <if test="salaryNo!=null and salaryNo!='' ">
+                and  salary_no like  '%${salaryNo}%'
+            </if>
+            <if test="salaryName!=null and salaryName!=''">
+                and  salary_name like  '%${salaryName}%'
+            </if>
+        </where>
+        ORDER BY  salary_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.salary
+        <where>
+            <if test="salaryNo!=null and salaryNo!='' ">
+                and  salary_no like  '%${salaryNo}%'
+            </if>
+            <if test="salaryName!=null and salaryName!=''">
+                and  salary_name like  '%${salaryName}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加信息-->
+    <insert id="addSalary" parameterType="Salary" keyProperty="salaryId" useGeneratedKeys="true">
+        insert into hospitalsystem.salary (salary_no,salary_name,salary_money)
+        values(#{salaryNo},#{salaryName},#{salaryMoney})
+    </insert>
+
+
+    <select id="findSalaryById"  parameterType="java.lang.Integer" resultType="Salary" >
+        select * from hospitalsystem.salary where salary_id=#{salaryId}
+    </select>
+
+    <select id="getAll" resultType="Salary">
+        select * from hospitalsystem.salary
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updateSalary" parameterType="Salary">
+        update hospitalsystem.salary
+        <set>
+            <if test="salaryNo !=null and salaryNo !=''">
+                salary_no=#{salaryNo},
+            </if>
+            <if test="salaryName !=null and salaryName !=''">
+                salary_name=#{salaryName},
+            </if>
+            <if test="salaryMoney !=null and salaryMoney !=''">
+                salary_money=#{salaryMoney},
+            </if>
+        </set>
+        where salary_id = #{salaryId}
+    </update>
+</mapper>

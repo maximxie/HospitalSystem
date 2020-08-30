@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.DeptDao" >
+
+    <!--分页查询-->
+    <select id="getSalaryList" parameterType="Dept" resultType="Dept">
+        select * from hospitalsystem.dept
+        <where>
+            <if test="deptNo!=null and deptNo!='' ">
+                and  dept_no like  '%${deptNo}%'
+            </if>
+            <if test="deptName!=null and deptName!=''">
+                and  dept_name like  '%${deptName}%'
+            </if>
+        </where>
+        ORDER BY  dept_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.dept
+        <where>
+            <if test="deptNo!=null and deptNo!='' ">
+                and  dept_no like  '%${deptNo}%'
+            </if>
+            <if test="deptName!=null and deptName!=''">
+                and  dept_name like  '%${deptName}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加信息-->
+    <insert id="addDept" parameterType="Dept" keyProperty="deptId" useGeneratedKeys="true">
+        insert into hospitalsystem.dept (dept_no,dept_name,dept_manager,dept_viceManager)
+        values(#{deptNo},#{deptName},#{deptManager},#{deptViceManager})
+    </insert>
+
+
+    <select id="findDeptById"  parameterType="java.lang.Integer" resultType="Dept" >
+        select * from hospitalsystem.dept where dept_id=#{deptId}
+    </select>
+
+    <select id="getAll" resultType="Dept">
+        select * from hospitalsystem.dept
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updateDept" parameterType="Dept">
+        update hospitalsystem.dept
+        <set>
+            <if test="deptNo !=null and deptNo !=''">
+                dept_no=#{deptNo},
+            </if>
+            <if test="deptName !=null and deptName !=''">
+                dept_name=#{deptName},
+            </if>
+            <if test="deptManager !=null and deptManager !=''">
+                dept_manager=#{deptManager},
+            </if>
+            <if test="deptViceManager !=null and deptViceManager !=''">
+                dept_viceManager=#{deptViceManager},
+            </if>
+        </set>
+        where dept_id = #{deptId}
+    </update>
+
+
+
+    <!--Mybatis使用Collection进行表关联查询关联一对多数据类型(dept为一，personnel为多)，且需要有id-->
+    <!--Association关联一对一类型-->
+    <!--部门人员信息查询信息-->
+    <resultMap type="com.xie.pojo.Dept" id="cardAndInfo2">
+        <id property="deptId" column="dept_id"/>
+        <result property="deptNo" column="dept_no"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="deptManager" column="dept_manager"/>
+        <result property="deptViceManager" column="dept_viceManager"/>
+        <collection property="personnels" ofType="com.xie.pojo.Personnel" javaType="ArrayList">
+            <id property="empId" column="emp_id"/>
+            <result property="empNo" column="emp_no"/>
+            <result property="empName" column="emp_name"/>
+            <result property="empDeptId" column="emp_deptId"/>
+            <result property="empDuty" column="emp_duty"/>
+            <result property="empXl" column="emp_xl"/>
+            <result property="empGender" column="emp_gender"/>
+            <result property="empBirthday" column="emp_birthday"/>
+            <result property="empHometown" column="emp_hometown"/>
+            <result property="empCountry" column="emp_country"/>
+            <result property="empNation" column="emp_nation"/>
+            <result property="empIdCard" column="emp_idCard"/>
+            <result property="empMarriage" column="emp_marriage"/>
+            <result property="empHealth" column="emp_health"/>
+            <result property="empStartWork" column="emp_startWork"/>
+            <result property="empState" column="emp_state"/>
+            <result property="empHomeAddress" column="emp_homeAddress"/>
+            <result property="empTeleNo" column="emp_teleNo"/>
+            <result property="empEmail" column="emp_email"/>
+            <result property="empJobId" column="emp_jobId"/>
+        </collection>
+    </resultMap>
+
+    <select id="findDeptPersonnel" parameterType="Dept" resultMap="cardAndInfo2">
+        SELECT uclass.dept_id as dept_id,uclass.dept_name as dept_name,uclass.dept_manager as dept_manager,uclass.dept_viceManager as dept_viceManager,
+        student.emp_no as emp_no,student.emp_name as emp_name,student.emp_state as emp_state,student.emp_teleNo as emp_teleNo,student.emp_duty as emp_duty
+        FROM hospitalsystem.dept uclass join hospitalsystem.personnel student
+        on uclass.dept_no = student.emp_deptId
+        <where>
+            <if test="deptNo!=null and deptNo!='' ">
+                and  uclass.dept_no like  '%${deptNo}%'
+            </if>
+            <if test="deptName!=null and deptName!=''">
+                and  uclass.dept_name like  '%${deptName}%'
+            </if>
+        </where>
+    </select>
+
+</mapper>

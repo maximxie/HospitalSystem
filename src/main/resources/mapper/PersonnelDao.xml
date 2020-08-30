@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xie.dao.PersonnelDao" >
+
+    <!--分页查询-->
+    <select id="getPersonnelList" parameterType="Personnel" resultType="Personnel">
+        select * from hospitalsystem.personnel
+        <where>
+            <if test="empNo!=null and empNo!='' ">
+                and  emp_no like  '%${empNo}%'
+            </if>
+            <if test="empName!=null and empName!=''">
+                and  emp_name like  '%${empName}%'
+            </if>
+        </where>
+        ORDER BY  emp_id asc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount"  resultType="java.lang.Integer">
+        select count(*) from hospitalsystem.personnel
+        <where>
+            <if test="empNo!=null and empNo!='' ">
+                and  emp_no like  '%${empNo}%'
+            </if>
+            <if test="empName!=null and empName!=''">
+                and  emp_name like  '%${empName}%'
+            </if>
+        </where>
+    </select>
+
+    <!--添加医生信息-->
+    <insert id="addPersonnel" parameterType="Personnel" keyProperty="empId" useGeneratedKeys="true">
+        insert into hospitalsystem.personnel (emp_no,emp_name,emp_deptId,emp_duty,emp_xl,emp_gender,emp_birthday,emp_hometown,emp_country,emp_nation,emp_idCard,emp_marriage,emp_health,emp_startWork,emp_state,emp_homeAddress,emp_teleNo,emp_email,emp_jobId)
+        values(#{empNo},#{empName},#{empDeptId},#{empDuty},#{empXl},#{empGender},#{empBirthday},#{empHometown},#{empCountry},#{empNation},#{empIdCard},#{empMarriage},#{empHealth},#{empStartWork},#{empState},#{empHomeAddress},#{empTeleNo},#{empEmail},#{empJobId})
+    </insert>
+
+    <!--通过id删除药物信息-->
+    <delete id="deletePersonnel" parameterType="java.lang.Integer" >
+        delete from hospitalsystem.personnel where emp_id=#{empId}
+    </delete>
+
+    <select id="findPersonnelById"  parameterType="java.lang.Integer" resultType="Personnel" >
+        select * from hospitalsystem.personnel where emp_id=#{empId}
+    </select>
+
+    <select id="getAll" resultType="Personnel">
+        select * from hospitalsystem.personnel
+    </select>
+
+    <!--修改管理员信息-->
+    <update id="updatePersonnel" parameterType="Personnel">
+        update hospitalsystem.personnel
+        <set>
+            <if test="empNo !=null and empNo !=''">
+                emp_no=#{empNo},
+            </if>
+            <if test="empName !=null and empName !=''">
+                emp_name=#{empName},
+            </if>
+            <if test="empDeptId !=null and empDeptId !=''">
+                emp_deptId=#{empDeptId},
+            </if>
+            <if test="empDuty !=null and empDuty !=''">
+                emp_duty=#{empDuty},
+            </if>
+            <if test="empXl!=null and empXl!=''">
+                emp_xl=#{empXl},
+            </if>
+            <if test="empGender!=null and empGender!=''">
+                emp_gender=#{empGender},
+            </if>
+            <if test="empBirthday!=null and empBirthday!=''">
+                emp_birthday=#{empBirthday},
+            </if>
+            <if test="empHometown!=null and empHometown!=''">
+                emp_hometown=#{empHometown},
+            </if>
+            <if test="empCountry!=null and empCountry!=''">
+                emp_country=#{empCountry},
+            </if>
+            <if test="empNation!=null and empNation!=''">
+                emp_nation=#{empNation},
+            </if>
+            <if test="empIdCard!=null and empIdCard!=''">
+                emp_idCard=#{empIdCard},
+            </if>
+            <if test="empMarriage!=null and empMarriage!=''">
+                emp_marriage=#{empMarriage},
+            </if>
+            <if test="empHealth!=null and empHealth!=''">
+                emp_health=#{empHealth},
+            </if>
+            <if test="empStartWork!=null and empStartWork!=''">
+                emp_startWork=#{empStartWork},
+            </if>
+            <if test="empState!=null and empState!=''">
+                emp_state=#{empState},
+            </if>
+            <if test="empHomeAddress!=null and empHomeAddress!=''">
+                emp_homeAddress=#{empHomeAddress},
+            </if>
+            <if test="empTeleNo!=null and empTeleNo!=''">
+                emp_teleNo=#{empTeleNo},
+            </if>
+            <if test="empEmail!=null and empEmail!=''">
+                emp_email=#{empEmail},
+            </if>
+            <if test="empJobId!=null and empJobId!=''">
+                emp_jobId=#{empJobId},
+            </if>
+        </set>
+        where emp_id = #{empId}
+    </update>
+</mapper>
