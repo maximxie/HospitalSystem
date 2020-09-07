@@ -18,7 +18,7 @@
 - [x] 个别模块关联查询  
 - [x] 各个模块数据导出Excel
 
-演示地址-->[http://www.maximxie.top](http://www.maximxie.top/)
+演示地址-->[http://a.maximxie.top/](http://a.maximxie.top/)
 
 管理员账号：yg009
 
